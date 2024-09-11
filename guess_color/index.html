@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=yes" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>Guess the Color</title>
+    <style>
+      body {
+        text-align: center;
+        font-family: "Poppins", sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+      }
+
+      .color-box {
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        background-color: #eee;
+        border: 4px solid #333;
+        border-radius: 10px;
+        transition: background-color 1s ease;
+        margin-bottom: 20px;
+      }
+
+      .guess-container {
+        margin-top: 20px;
+      }
+
+      .guess-container input {
+        font-size: 1.5em;
+        padding: 10px;
+        width: 100px;
+        text-align: center;
+        border: 2px solid #333;
+        border-radius: 5px;
+      }
+
+      .guess-container button {
+        font-size: 1.2em;
+        padding: 10px 20px;
+        background-color: #333;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-left: 10px;
+      }
+
+      .scoreboard {
+        font-size: 1.2em;
+        margin-top: 20px;
+      }
+
+      .timer {
+        font-size: 1.2em;
+        color: red;
+        margin-top: 10px;
+      }
+
+      .message {
+        margin-top: 10px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Guess the Color Game!</h1>
+    <div class="color-box"></div>
+    <div class="guess-container">
+      <form class="answer" onsubmit="submitMyGuess(); return false;">
+        # <input type="text" placeholder="fff" maxlength="6" required />
+        <button type="submit">Submit Guess</button>
+      </form>
+    </div>
+    <div class="scoreboard">
+      <span id="score">Score: 0</span>
+    </div>
+    <div class="timer" id="timer">Time left: 10s</div>
+    <div class="message" id="message"></div>
+
+    <script>
+      let score = 0;
+      let timeLeft = 10;
+      let timerInterval;
+
+      function submitMyGuess() {
+        const value = document.querySelector("input").value;
+        const currentColor = window.currentColor;
+        const message = document.getElementById("message");
+
+        message.textContent = "";
+
+        if (value.toLowerCase() === currentColor) {
+          score++;
+          message.textContent = "You are right! Congrats!";
+          message.style.color = "green";
+        } else {
+          message.textContent = `Wrong! Your answer was: #${value}. The correct answer is: #${currentColor}`;
+          message.style.color = "red";
+        }
+
+        document.getElementById("score").textContent = "Score: " + score;
+        document.querySelector("input").value = "";
+
+        setRandomColor();
+        resetTimer();
+      }
+
+      function randomNumber() {
+        const n = Math.floor(Math.random() * 16);
+        return n.toString(16);
+      }
+
+      function setRandomColor() {
+        const hex = randomNumber() + randomNumber() + randomNumber();
+        window.currentColor = hex;
+        document.querySelector(".color-box").style.backgroundColor = "#" + hex;
+      }
+
+      function startTimer() {
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            document.getElementById("timer").textContent =
+              "Time left: " + timeLeft + "s";
+          } else {
+            alert("Time is up! You didn’t guess in time.");
+            setRandomColor();
+            resetTimer();
+          }
+        }, 1000);
+      }
+
+      function resetTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 10;
+        document.getElementById("timer").textContent =
+          "Time left: " + timeLeft + "s";
+        startTimer();
+      }
+
+      setRandomColor();
+      startTimer();
+    </script>
+  </body>
+</html>
